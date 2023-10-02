@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Center } from "../CSSEXPORT";
 import styled from "styled-components";
 import PrimaryBtn from "../comp/PrimaryBtn";
 // import { useNavigate } from "react-router-dom";
 import ButtonLink from "../comp/ButtonLink";
 import Cart from "../Icons/Cart";
+import { CartContext } from "../../CartContext";
+// import { CartContext } from "../../CartContext";
 const Bg = styled.div`
   background-color: #222;
   color: #fff;
@@ -45,6 +47,12 @@ const ButtonWrapper = styled.div`
 `;
 
 const Featured = ({ product }) => {
+  // const { cartProducts, setCartProducts } = useContext(CartContext);
+  const {CartProducts,setCartProducts} = useContext(CartContext);
+
+function addfeatureProductToCart (){
+  setCartProducts(prev=>[...prev,product._id])
+}
 
   return (
     <Bg>
@@ -63,12 +71,13 @@ const Featured = ({ product }) => {
                   to={`/products/${product._id}`}
                 />
                 <PrimaryBtn
-                  primary={1}
+                  
                   title="Add to cart"
                   size="l"
                   icon={
                    <Cart/>
                   }
+                  onClick={()=>addfeatureProductToCart()}
                 />
               </ButtonWrapper>
             </div>

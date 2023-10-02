@@ -1,17 +1,18 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import { primary } from "./Color";
 
 const StyledBtn = styled.button`
   border: 0;
-  padding: 5px 50px;
+  padding: 5px 5px;
   border-radius: 5px;
   cursor: pointer;
   display: inline-flex;
-  align-items:center;
+  align-items: center;
+  font-weight:bold;
   svg {
     height: 16px;
-    margin-right:5px;
-
+    margin-right: 5px;
   }
   ${(props) =>
     props.white &&
@@ -30,10 +31,19 @@ const StyledBtn = styled.button`
     `}
   ${(props) =>
     props.primary &&
+    !props.outline &&
     css`
       color: #fff;
-      background-color: #5542f6;
-      border: 1px solid #5542f6;
+      background-color: ${primary};
+      border: 1px solid ${primary};
+    `}
+    ${(props) =>
+    props.primary &&
+    props.outline &&
+    css`
+      color: ${primary};
+      background-color: transparent;
+      border: 1px solid ${primary};
     `}
   ${(props) =>
     props.size === "l" &&
@@ -41,8 +51,8 @@ const StyledBtn = styled.button`
       font-size: 1.2rem;
       padding: 10px 20px;
       svg {
-    height: 20px;
-  }
+        height: 20px;
+      }
     `}
 `;
 

@@ -2,10 +2,12 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home, NavBar } from "./components";
 import { useEffect, useState } from "react";
+import { CartContext } from "./CartContext";
 
 function App() {
   const [FeaturedProducts, setFeaturedProducts] = useState([]);
   const [products, setProducts] = useState([]);
+  const [CartProducts, setCartProducts] = useState([])
 
   useEffect(() => {
     fetchFeatured();
@@ -36,12 +38,17 @@ function App() {
       });
   }
 
+
+
   return (
     <BrowserRouter>
-      <NavBar />
+    <CartContext.Provider value={{CartProducts, setCartProducts}}>
+    <NavBar />
       <Routes>
         <Route path="/" element={<Home FeaturedProduct={FeaturedProducts} products={products} />} />
       </Routes>
+    </CartContext.Provider>
+
     </BrowserRouter>
   );
 }

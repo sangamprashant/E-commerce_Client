@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { CartContext } from "../CartContext";
 
 const StyledHeader = styled.header`
   background-color: #222;
@@ -34,6 +35,7 @@ const NavLink = styled(Link)`
 `;
 
 const NavBar = () => {
+  const {CartProducts,setCartProducts} = useContext(CartContext);
   return (
     <StyledHeader>
       <NavCenter>
@@ -44,7 +46,7 @@ const NavBar = () => {
             <NavLink to="/products">All products</NavLink>
             <NavLink to="/categories">Categories</NavLink>
             <NavLink to="/account">Account</NavLink>
-            <NavLink to="/cart">Cart (0)</NavLink>
+            <NavLink to="/cart">Cart ({CartProducts.length})</NavLink>
           </StyledNav>
         </Wraper>
       </NavCenter>
