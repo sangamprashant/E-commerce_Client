@@ -16,6 +16,7 @@ require('./models/categories')
 app.use(require("./routes/admin"))
 app.use(require("./routes/product"))
 app.use(require("./routes/categories"))
+app.use(require("./routes/cart"))
 
 // connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {

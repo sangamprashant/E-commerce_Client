@@ -28,7 +28,7 @@ router.post('/api/products', async (req, res) => {
 
 router.get("/api/products", async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({}).populate("category");
     res.status(200).json(products);
   } catch (error) {
     console.error("Error:", error);
@@ -38,7 +38,7 @@ router.get("/api/products", async (req, res) => {
 
 router.get("/api/products/latest", async (req, res) => {
   try {
-    const products = await Product.find({}).sort({ _id: -1 }).limit(5);
+    const products = await Product.find({}).sort({ _id: -1 }).limit(4);
     res.status(200).json(products);
   } catch (error) {
     console.error("Error:", error);
@@ -61,7 +61,7 @@ router.put("/api/products", async (req, res) => {
 router.get("/api/products/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findOne({ _id: id });
+    const product = await Product.findOne({ _id: id }).populate("category");
     res.status(200).json(product);
   } catch (error) {
     console.error("Error:", error);

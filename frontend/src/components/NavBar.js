@@ -34,8 +34,15 @@ const NavLink = styled(Link)`
   text-decoration: none;
 `;
 
+const Count = styled.sup`
+  background-color: red;
+  padding: 1px 6px;
+  border-radius: 50%;
+  color: white;
+`;
+
 const NavBar = () => {
-  const {CartProducts,setCartProducts} = useContext(CartContext);
+  const { CartProducts, setCartProducts } = useContext(CartContext);
   return (
     <StyledHeader>
       <NavCenter>
@@ -46,7 +53,9 @@ const NavBar = () => {
             <NavLink to="/products">All products</NavLink>
             <NavLink to="/categories">Categories</NavLink>
             <NavLink to="/account">Account</NavLink>
-            <NavLink to="/cart">Cart ({CartProducts.length})</NavLink>
+            <NavLink to="/cart">
+              Cart <Count>{CartProducts.length}</Count>
+            </NavLink>
           </StyledNav>
         </Wraper>
       </NavCenter>

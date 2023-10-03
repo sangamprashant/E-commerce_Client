@@ -71,7 +71,7 @@ function addfeatureProductToCart (){
                   to={`/products/${product._id}`}
                 />
                 <PrimaryBtn
-                  
+                  primary
                   title="Add to cart"
                   size="l"
                   icon={
@@ -83,7 +83,7 @@ function addfeatureProductToCart (){
             </div>
           </Colum>
           <Colum>
-            <img src="https://images3.alphacoders.com/165/thumb-1920-165265.jpg" />
+            <img src={product.images&&product?.images[0]} />
           </Colum>
         </Wrapper>
       </Center>

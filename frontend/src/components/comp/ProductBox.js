@@ -10,7 +10,7 @@ const ProductWrapper = styled.div``;
 const Box = styled.div`
   background-color: #fff;
   padding: 20px;
-  height: 120px;
+  height: 140px;
   text-align: center;
   display: flex;
   align-items: center;
@@ -18,7 +18,7 @@ const Box = styled.div`
   border-radius: 10px;
   img {
     max-width: 100%;
-    max-height: 80px;
+    max-height: 100px;
   }
 `;
 
@@ -67,7 +67,7 @@ const ProductBox = ({ _id, title, description, price, images }) => {
       <ProductInfoBox>
         <Title to={url}> {title}</Title>
         <PriceRow>
-          <Price>${price}</Price>
+          <Price>₹{price}</Price>
           <PrimaryBtn primary outline title={"Add to cart"} onClick={()=>AddCart(_id)}/>
         </PriceRow>
       </ProductInfoBox>
