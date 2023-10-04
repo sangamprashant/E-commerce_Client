@@ -8,6 +8,8 @@ import AllProducts from "./AllProducts";
 import ContactUs from "./ContactUs";
 import Footer from "./Footer";
 import ProductOpen from "./ProductOpen";
+import Categories from "./Categories";
+import SubCategory from "./category/SubCategory";
 
 export {
   NavBar,
@@ -20,4 +22,6 @@ export {
   ContactUs,
   Footer,
   ProductOpen,
+  Categories,
+  SubCategory,
 };

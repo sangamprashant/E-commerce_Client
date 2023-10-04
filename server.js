@@ -12,11 +12,13 @@ app.use(express.json())
 require('./models/admin')
 require('./models/product')
 require('./models/categories')
+require('./models/user')
 
 app.use(require("./routes/admin"))
 app.use(require("./routes/product"))
 app.use(require("./routes/categories"))
 app.use(require("./routes/cart"))
+app.use(require("./routes/user"))
 
 // connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {

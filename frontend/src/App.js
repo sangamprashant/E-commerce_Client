@@ -1,6 +1,8 @@
 import "./App.css";
+import { ToastContainer } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AllProducts, Cart, Footer, Home, NavBar, ProductOpen, Signup } from "./components";
+import { AllProducts, Cart, Categories, Footer, Home, NavBar, ProductOpen, Signup } from "./components";
 import { useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
 import axios from "axios";
@@ -10,11 +12,12 @@ function App() {
   const [products, setProducts] = useState([]);
   const [CartProducts, setCartProducts] = useState([])
   const [AllCategories,setAllcategories] = useState([])
+  const [toggleLog, setToggleLog] = useState(true)
 
   useEffect(() => {
     fetchFeatured();
     fetchAllproduct();
-    
+    fetchAllCategories();
   }, []);
 
   const fetchFeatured = () => {
@@ -49,16 +52,18 @@ function App() {
   return (
     <BrowserRouter>
     <CartContext.Provider value={{CartProducts, setCartProducts}}>
-      <NavBar />
+      <NavBar toggleLog={toggleLog}/>
       <Routes>
         <Route path="/" element={<Home FeaturedProduct={FeaturedProducts} products={products} />} />
         <Route path="/cart" element={<Cart/>} />
         <Route path="/products" element={<AllProducts/>} />
-        <Route path="/log" element={<Signup/>} />
+        <Route path="/log" element={<Signup setToggleLog={setToggleLog}/>} />
         <Route path="/products/:id" element={<ProductOpen/>} />
+        <Route path="/categories" element={<Categories AllCategories={AllCategories}/>} />
 
       </Routes>
       <Footer/>
+      <ToastContainer theme="dark"/>
     </CartContext.Provider>
 
     </BrowserRouter>

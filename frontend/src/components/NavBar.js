@@ -41,7 +41,7 @@ const Count = styled.sup`
   color: white;
 `;
 
-const NavBar = () => {
+const NavBar = ({toggleLog}) => {
   const { CartProducts, setCartProducts } = useContext(CartContext);
   return (
     <StyledHeader>
@@ -53,9 +53,8 @@ const NavBar = () => {
             <NavLink to="/products">All products</NavLink>
             <NavLink to="/categories">Categories</NavLink>
             <NavLink to="/account">Account</NavLink>
-            <NavLink to="/cart">
-              Cart <Count>{CartProducts.length}</Count>
-            </NavLink>
+            <NavLink to="/cart">Cart <Count>{CartProducts.length}</Count></NavLink>
+            <NavLink to="/log">{!toggleLog?"Login":"SignUp"}</NavLink>
           </StyledNav>
         </Wraper>
       </NavCenter>

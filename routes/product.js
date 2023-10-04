@@ -3,9 +3,10 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const Product = mongoose.model("product");
 
-router.post('/api/products', async (req, res) => {
+router.post("/api/products", async (req, res) => {
   try {
-    const { title, description, price, images, category, properties } = req.body;
+    const { title, description, price, images, category, properties } =
+      req.body;
 
     // Create and save the product
     const product = new Product({
@@ -47,10 +48,14 @@ router.get("/api/products/latest", async (req, res) => {
 });
 
 router.put("/api/products", async (req, res) => {
-  const { images, title, description, price, _id, category, properties } = req.body;
+  const { images, title, description, price, _id, category, properties } =
+    req.body;
   console.log(category);
   try {
-    await Product.findOneAndUpdate({ _id }, { title, description, price, images, category, properties });
+    await Product.findOneAndUpdate(
+      { _id },
+      { title, description, price, images, category, properties }
+    );
     res.status(200).json({ message: "Product updated successfully" });
   } catch (error) {
     console.error("Error:", error);
@@ -78,6 +83,31 @@ router.delete("/api/products/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete the product" });
   }
 });
-
+router.get("/api/products/by/category/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    // console.log(name)
+     await Product.find({})
+      .populate({
+        path: "category",
+        match: { name: name }, 
+        select: "name", 
+      })
+      .then(( products) => {
+          // Filter products that have a matching category
+          const filteredProducts = products.filter(
+            (product) => product.category !== null
+          );
+          // Now, filteredProducts contains products in the specified category
+          res.status(200).json(filteredProducts);
+        
+      });
+    // console.log(product)
+    // res.status(200).json(products);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Failed to fetch the product" });
+  }
+});
 
 module.exports = router;
