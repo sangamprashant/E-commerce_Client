@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { CartContext } from "../CartContext";
+import { toast } from "react-toastify";
 
 const StyledHeader = styled.header`
   background-color: #222;
@@ -41,8 +42,35 @@ const Count = styled.sup`
   color: white;
 `;
 
-const NavBar = ({toggleLog}) => {
-  const { CartProducts, setCartProducts } = useContext(CartContext);
+const NavBar = ({ toggleLog }) => {
+  const { CartProducts, setCartProducts, setLogged, logged } = useContext(CartContext);
+  const navigate = useNavigate();
+
+  const handelLogOut = () => {
+    sessionStorage.clear();
+    navigate("/");
+    setLogged(false);
+    toast.success("Logged out successfully.")
+  };
+
+  const handelNav = () => {
+    if (logged) {
+      return [
+        <>
+          <NavLink to="/myorder">My Order</NavLink>
+          <NavLink to="/cart">Cart <Count>{CartProducts.length}</Count></NavLink>
+          <NavLink to="/" onClick={handelLogOut}>Log Out</NavLink>
+        </>,
+      ];
+    } else {
+      return [
+        <>
+          <NavLink to="/log">{!toggleLog ? "Login" : "Get Started"}</NavLink>
+        </>
+      ]
+    }
+  };
+
   return (
     <StyledHeader>
       <NavCenter>
@@ -52,9 +80,7 @@ const NavBar = ({toggleLog}) => {
             <NavLink to="/">Home</NavLink>
             <NavLink to="/products">All products</NavLink>
             <NavLink to="/categories">Categories</NavLink>
-            <NavLink to="/account">Account</NavLink>
-            <NavLink to="/cart">Cart <Count>{CartProducts.length}</Count></NavLink>
-            <NavLink to="/log">{!toggleLog?"Login":"SignUp"}</NavLink>
+            {handelNav()}
           </StyledNav>
         </Wraper>
       </NavCenter>

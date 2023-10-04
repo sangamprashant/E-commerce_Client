@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Center } from "./CSSEXPORT";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { CartContext } from "../CartContext";
 
 const Signup = ({ setToggleLog }) => {
+  const { CartProducts, setCartProducts,setLogged,setToken } = useContext(CartContext);
   const [containerOpen, setContainerOpen] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
@@ -15,6 +17,7 @@ const Signup = ({ setToggleLog }) => {
   const [serverOtp, setServerOtp] = useState("");
   const [EnteredOtp, setEnteredOtp] = useState(["", "", "", "", "", ""]);
   const [logLoading, setLogLoading] = useState(false);
+  const navigate= useNavigate();
 
   const handelContainerOpen = () => {
     setContainerOpen(!containerOpen);
@@ -51,8 +54,7 @@ const Signup = ({ setToggleLog }) => {
           formData
         );
         if (response.status === 200) {
-          toast.success(response.data.message);
-          console.log(response.data);
+          handelData(response.data)
         }
       } catch (error) {
         toast.error(error.response.data.message);
@@ -76,7 +78,6 @@ const Signup = ({ setToggleLog }) => {
         if (response.status === 200) {
           toast.success(response.data.message);
           setServerOtp(response.data.otp);
-          console.log(response.data.otp);
           setEnterOtp(true);
         }
       } catch (error) {
@@ -92,8 +93,7 @@ const Signup = ({ setToggleLog }) => {
           formData
         );
         if (response.status === 200) {
-          toast.success(response.data.message);
-          console.log(response.data);
+          handelData(response.data)
         }
       } catch (error) {
         toast.error(error.response.data.message);
@@ -101,6 +101,15 @@ const Signup = ({ setToggleLog }) => {
         setLogLoading(false);
       }
     }
+  }
+
+  const handelData = (data) => {
+    toast.success(data.message);
+    sessionStorage.setItem("user",JSON.stringify(data.user))
+    sessionStorage.setItem("token",data.token)
+    setToken(data.token)
+    navigate("/")
+    setLogged(true)
   }
 
   return (
@@ -122,15 +131,11 @@ const Signup = ({ setToggleLog }) => {
                 <label htmlFor="email" className="leading-7 text-sm text-gray-600">Email</label>
                 <input type="email" id="email" name="email" value={formData.email} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handleInputForm} required />
               </div>
-             
-            
                 <div className="relative mb-4">
                   <label htmlFor="password" className="leading-7 text-sm text-gray-600">Password</label>
                   <input type="password" id="password" name="password" value={formData.password} className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handleInputForm} required/>
                 </div>
-             
               <button type="submit" className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg" disabled={logLoading}>{!logLoading?"Submit":"Loading.."}</button>
-              <p className="text-xs text-gray-500 mt-3">Literally you probably haven't heard of them jean shorts.</p>
               {!containerOpen ? <Link onClick={() => handelContainerOpen()}>Sign up</Link> : <Link onClick={() => handelContainerOpen()}>Sign In</Link>}
             </form>
           ) : (

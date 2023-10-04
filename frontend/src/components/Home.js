@@ -3,10 +3,10 @@ import Featured from './home/Featured'
 import NewProducts from './home/NewProducts'
 import ContactUs from './ContactUs'
 
-const Home = ({FeaturedProduct,products}) => {
+const Home = ({FeaturedProduct,products,logged}) => {
   return (
     <div>
-        <Featured product={FeaturedProduct}/>
+        <Featured product={FeaturedProduct} logged={logged}/>
         <NewProducts products={products}/>
         <ContactUs/>
     </div>

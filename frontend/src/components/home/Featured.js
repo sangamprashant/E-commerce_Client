@@ -6,6 +6,7 @@ import PrimaryBtn from "../comp/PrimaryBtn";
 import ButtonLink from "../comp/ButtonLink";
 import Cart from "../Icons/Cart";
 import { CartContext } from "../../CartContext";
+import { useNavigate } from "react-router-dom";
 // import { CartContext } from "../../CartContext";
 const Bg = styled.div`
   background-color: #222;
@@ -46,9 +47,10 @@ const ButtonWrapper = styled.div`
   margin-top: 25px;
 `;
 
-const Featured = ({ product }) => {
+const Featured = ({ product,logged }) => {
   // const { cartProducts, setCartProducts } = useContext(CartContext);
   const {CartProducts,setCartProducts} = useContext(CartContext);
+  const navigate = useNavigate()
 
 function addfeatureProductToCart (){
   setCartProducts(prev=>[...prev,product._id])
@@ -70,7 +72,7 @@ function addfeatureProductToCart (){
                   size="l"
                   to={`/products/${product._id}`}
                 />
-                <PrimaryBtn
+                {logged?<PrimaryBtn
                   primary
                   title="Add to cart"
                   size="l"
@@ -78,7 +80,12 @@ function addfeatureProductToCart (){
                    <Cart/>
                   }
                   onClick={()=>addfeatureProductToCart()}
-                />
+                />:<PrimaryBtn
+                  primary
+                  title="Get Satrted"
+                  size="l"
+                  onClick={()=>navigate("/log")}
+                />}
               </ButtonWrapper>
             </div>
           </Colum>

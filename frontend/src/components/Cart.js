@@ -65,7 +65,7 @@ const Cart = () => {
                 <thead>
                   {/* <th>Image</th> */}
                   <th>Product</th>
-                  <th>Quantity</th>
+                  <th className="quantity_box">Quantity</th>
                   <th>Price</th>
                 </thead>
                 <tbody>
@@ -77,7 +77,7 @@ const Cart = () => {
                         </ProductImageBox>
                         {item.title}
                       </td>
-                      <td>
+                      <td className="quantity_box">
                         <PrimaryBtn title="-" onClick={()=>lessOfTheProduct(item._id)}/>
                         <Quantity>
                           {CartProducts.filter((id) => id === item._id).length}

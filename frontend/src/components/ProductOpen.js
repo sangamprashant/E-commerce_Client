@@ -1,10 +1,13 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { CartContext } from '../CartContext';
+import Cart from './Icons/Cart';
 
 const ProductOpen = () => {
   const [product, setProduct] = useState({});
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0); // To track the selected image index
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const { CartProducts, setCartProducts, setLogged, logged } = useContext(CartContext);
 
   const { id } = useParams();
   console.log(id);
@@ -23,6 +26,10 @@ const ProductOpen = () => {
     setSelectedImageIndex(index);
   };
 
+  function addfeatureProductToCart (){
+    setCartProducts(prev=>[...prev,product._id])
+  }
+
   return (
     <div>
       <section className="text-gray-600 body-font overflow-hidden">
@@ -31,7 +38,7 @@ const ProductOpen = () => {
             <div className='w-full m-0 lg:w-1/2 lg:h-auto'>
               <img
                 alt="Product"
-                className="w-full h-90 object-cover object-center rounded"
+                className="w-full h-90 object-contain object-center rounded Product_image"
                 src={product.images && product.images[selectedImageIndex]}
               />
               <div className="mt-4 flex">
@@ -54,23 +61,16 @@ const ProductOpen = () => {
               <h2 className="text-sm title-font text-gray-500 tracking-widest">{product?.category?.name}</h2>
               <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">{product.title}</h1>
               <p className="leading-relaxed mb-4">{product.description}</p>
-              <div className="flex border-t border-gray-200 py-2">
-                <span className="text-gray-500">Color</span>
-                <span className="ml-auto text-gray-900">Blue</span>
-              </div>
-              <div className="flex border-t border-gray-200 py-2">
-                <span className="text-gray-500">Size</span>
-                <span className="ml-auto text-gray-900">Medium</span>
-              </div>
-              <div className="flex border-t border-b mb-6 border-gray-200 py-2">
-                <span className="text-gray-500">Quantity</span>
-                <span className="ml-auto text-gray-900">4</span>
-              </div>
+              {product&& product?.properties&&Object.entries(product?.properties).map(([propertyName, propertyValue]) => (
+              <div key={propertyName} className="flex border-t border-gray-200 py-2">
+                <span className="text-gray-500">{propertyName}</span>
+                <span className="ml-auto text-gray-900">{propertyValue}</span>
+              </div>))}
               <div className="flex">
-                <span className="title-font font-medium text-2xl text-gray-900">$58.00</span>
-                <button className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
-                  Button
-                </button>
+                <span className="title-font font-medium text-2xl text-gray-900">₹{product.price}</span>
+                {logged&& <button className="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onClick={addfeatureProductToCart}>
+                 <Cart/> Add to cart
+                </button>}
               </div>
             </div>
           </div>

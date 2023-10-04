@@ -13,6 +13,8 @@ function App() {
   const [CartProducts, setCartProducts] = useState([])
   const [AllCategories,setAllcategories] = useState([])
   const [toggleLog, setToggleLog] = useState(true)
+  const [token,setToken] = useState(sessionStorage.getItem("token"))
+  const [logged,setLogged] = useState(token?true:false)
 
   useEffect(() => {
     fetchFeatured();
@@ -51,10 +53,10 @@ function App() {
 
   return (
     <BrowserRouter>
-    <CartContext.Provider value={{CartProducts, setCartProducts}}>
+    <CartContext.Provider value={{CartProducts, setCartProducts,setLogged,logged,token,setToken}}>
       <NavBar toggleLog={toggleLog}/>
       <Routes>
-        <Route path="/" element={<Home FeaturedProduct={FeaturedProducts} products={products} />} />
+        <Route path="/" element={<Home FeaturedProduct={FeaturedProducts} products={products} logged={logged}/>} />
         <Route path="/cart" element={<Cart/>} />
         <Route path="/products" element={<AllProducts/>} />
         <Route path="/log" element={<Signup setToggleLog={setToggleLog}/>} />
