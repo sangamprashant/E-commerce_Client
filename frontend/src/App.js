@@ -24,7 +24,7 @@ function App() {
 
       usersCart();
     }
-  }, [logged,CartProducts]);
+  }, [logged]);
 
   const fetchFeatured = () => {
     // Make an HTTP GET request to fetch FeaturedProducts

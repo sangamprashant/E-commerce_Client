@@ -13,11 +13,13 @@ require('./models/admin')
 require('./models/product')
 require('./models/categories')
 require('./models/user')
+require('./models/order')
 
 app.use(require("./routes/admin"))
 app.use(require("./routes/product"))
 app.use(require("./routes/categories"))
 app.use(require("./routes/cart"))
+app.use(require("./routes/order"))
 app.use(require("./routes/user"))
 
 // connect to MongoDB

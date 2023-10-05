@@ -49,7 +49,6 @@ const Price = styled.span`
 
 const ProductBox = ({ _id, title, description, price, images }) => {
   const { CartProducts, setCartProducts, logged ,token} = useContext(CartContext);
-console.log(CartProducts)
   const url = "/products/" + _id;
 
   async function AddCart(id) {

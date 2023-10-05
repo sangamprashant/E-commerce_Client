@@ -41,6 +41,13 @@ const Wrapper = styled.div`
 const Colum = styled.div`
   display: flex;
   align-items: center;
+  img{
+    width:400px;
+    height:400px;
+    ${'' /* object-fit:contain; */}
+    border-radius:20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+  }
 `;
 
 const ButtonWrapper = styled.div`
