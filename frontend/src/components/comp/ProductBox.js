@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { CartContext } from "../../CartContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { json } from "express";
 
 const ProductWrapper = styled.div``;
 
@@ -49,8 +48,7 @@ const Price = styled.span`
 `;
 
 const ProductBox = ({ _id, title, description, price, images }) => {
-  const { CartProducts, setCartProducts, logged, token } =
-    useContext(CartContext);
+  const { CartProducts, setCartProducts, logged ,token} = useContext(CartContext);
 
   const url = "/products/" + _id;
 
