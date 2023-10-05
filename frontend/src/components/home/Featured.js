@@ -7,6 +7,8 @@ import ButtonLink from "../comp/ButtonLink";
 import Cart from "../Icons/Cart";
 import { CartContext } from "../../CartContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 // import { CartContext } from "../../CartContext";
 const Bg = styled.div`
   background-color: #222;
@@ -47,14 +49,35 @@ const ButtonWrapper = styled.div`
   margin-top: 25px;
 `;
 
-const Featured = ({ product,logged }) => {
+const Featured = ({ product }) => {
   // const { cartProducts, setCartProducts } = useContext(CartContext);
-  const {CartProducts,setCartProducts} = useContext(CartContext);
-  const navigate = useNavigate()
+  const { CartProducts, setCartProducts, logged, token } =
+    useContext(CartContext);
+  const navigate = useNavigate();
 
-function addfeatureProductToCart (){
-  setCartProducts(prev=>[...prev,product._id])
-}
+  async function addfeatureProductToCart() {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/add/to/cart",
+        { productId: product._id }, // Send the product ID in the request body
+        {
+          headers: {
+            Authorization: "Bearer " + token, // Set the Authorization header
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        setCartProducts((prev) => [...prev, product._id]);
+      }
+    } catch (error) {
+      // Handle errors here
+      toast.error(error.response.data.message);
+      console.error("Error:", error);
+    }
+  }
+  const isInCart = CartProducts.includes(product._id);
 
   return (
     <Bg>
@@ -72,25 +95,39 @@ function addfeatureProductToCart (){
                   size="l"
                   to={`/products/${product._id}`}
                 />
-                {logged?<PrimaryBtn
-                  primary
-                  title="Add to cart"
-                  size="l"
-                  icon={
-                   <Cart/>
-                  }
-                  onClick={()=>addfeatureProductToCart()}
-                />:<PrimaryBtn
-                  primary
-                  title="Get Satrted"
-                  size="l"
-                  onClick={()=>navigate("/log")}
-                />}
+                {logged ? (
+                  <>
+                    {!isInCart ? (
+                      <PrimaryBtn
+                        primary
+                        title="Add to cart"
+                        size="l"
+                        icon={<Cart />}
+                        onClick={() => addfeatureProductToCart()}
+                      />
+                    ) : (
+                      <PrimaryBtn
+                        primary
+                        title="Go to cart"
+                        size="l"
+                        icon={<Cart />}
+                        onClick={() => navigate("/cart")}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <PrimaryBtn
+                    primary
+                    title="Get Started"
+                    size="l"
+                    onClick={() => navigate("/log")}
+                  />
+                )}
               </ButtonWrapper>
             </div>
           </Colum>
           <Colum>
-            <img src={product.images&&product?.images[0]} />
+            <img src={product.images && product?.images[0]} />
           </Colum>
         </Wrapper>
       </Center>

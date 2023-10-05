@@ -1,5 +1,5 @@
 import "./App.css";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AllProducts, Cart, Categories, Footer, Home, NavBar, ProductOpen, Signup } from "./components";
@@ -20,7 +20,11 @@ function App() {
     fetchFeatured();
     fetchAllproduct();
     fetchAllCategories();
-  }, []);
+    if(logged){
+
+      usersCart();
+    }
+  }, [logged,CartProducts]);
 
   const fetchFeatured = () => {
     // Make an HTTP GET request to fetch FeaturedProducts
@@ -50,6 +54,23 @@ function App() {
   const response = await axios.get("http://localhost:5000/api/categories")
   setAllcategories(response.data)
  }
+
+  const usersCart = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/logged/user/cart",        {
+        headers: {
+          Authorization: "Bearer " + token, // Set the Authorization header
+        },
+      })
+      if(response.status===200){
+        setCartProducts(response.data.carts)
+      }
+    } catch (error) {
+      toast.error(error.response.data.message)
+      
+    }
+
+  }
 
   return (
     <BrowserRouter>

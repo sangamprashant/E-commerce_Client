@@ -4,6 +4,7 @@ import styled from "styled-components";
 import PrimaryBtn from "./comp/PrimaryBtn";
 import { CartContext } from "../CartContext";
 import axios from "axios";
+import { toast   } from "react-toastify"
 import ButtonLink from "./comp/ButtonLink";
 
 const ColumnsWrapper = styled.div`
@@ -24,7 +25,7 @@ const Quantity = styled.span`
 `;
 
 const Cart = () => {
-  const { CartProducts, setCartProducts } = useContext(CartContext);
+  const { CartProducts, setCartProducts, token } = useContext(CartContext);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -41,9 +42,9 @@ const Cart = () => {
     }
   };
 
-  function moreOfTheProduct(id) {
-    setCartProducts(prev=>[...prev,id])
-  }
+  // function moreOfTheProduct(id) {
+  //   setCartProducts(prev=>[...prev,id])
+  // }
   function lessOfTheProduct(id){
     setCartProducts(prev=>{
         const pos= prev.indexOf(id);
@@ -52,6 +53,28 @@ const Cart = () => {
         }
         return prev;
     })
+  }
+  async function moreOfTheProduct(id) {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/add/to/cart",
+        { productId: id }, // Send the product ID in the request body
+        {
+          headers: {
+            Authorization: "Bearer " + token, // Set the Authorization header
+          },
+        }
+      );
+      
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        setCartProducts(prev=>[...prev,id])
+      }
+    } catch (error) {
+      // Handle errors here
+      toast.error(error.response.data.message)
+      console.error("Error:", error);
+    }
   }
 
   return (

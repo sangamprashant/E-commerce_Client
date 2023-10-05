@@ -49,7 +49,7 @@ const Price = styled.span`
 
 const ProductBox = ({ _id, title, description, price, images }) => {
   const { CartProducts, setCartProducts, logged ,token} = useContext(CartContext);
-
+console.log(CartProducts)
   const url = "/products/" + _id;
 
   async function AddCart(id) {
@@ -66,6 +66,7 @@ const ProductBox = ({ _id, title, description, price, images }) => {
       
       if (response.status === 200) {
         toast.success(response.data.message);
+        setCartProducts(prev=>[...prev,_id])
       }
     } catch (error) {
       // Handle errors here

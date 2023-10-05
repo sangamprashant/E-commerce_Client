@@ -5,7 +5,7 @@ const router = express.Router();
 const User = mongoose.model("client");
 const Product = mongoose.model("product");
 
-router.post('/api/add/to/cart', requireLogin, async (req, res) => {
+router.post("/api/add/to/cart", requireLogin, async (req, res) => {
   try {
     // Get the user's ID from the authenticated request
     const userId = req.user._id;
@@ -16,16 +16,13 @@ router.post('/api/add/to/cart', requireLogin, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     // Ensure productId is an array (wrapping a single ID if needed)
     const productIds = Array.isArray(productId) ? productId : [productId];
-
     // Add productIds to the user's cart
     user.carts.push(...productIds);
-console.log(user)
+    console.log(user);
     // Save the updated user document
     await user.save();
-
     res.status(200).json({ message: "Products added to cart successfully" });
   } catch (error) {
     console.error("Error:", error);
@@ -33,16 +30,30 @@ console.log(user)
   }
 });
 
-router.post('/api/cart', async (req, res) => {
+router.post("/api/cart", async (req, res) => {
   try {
-    // const { title, description, price, images, category, properties } = req.body;
-    const ids= req.body.ids;
-    console.log(ids)
-    const product = await Product.find({_id:ids})
-    res.status(200).json(product);
+    const ids = req.body.ids;
+    // Find products based on the provided product IDs
+    const products = await Product.find({ _id: { $in: ids } });
+    // Filter out products that were not found (empty array)
+    const existingProducts = products.filter((product) => product);
+    res.status(200).json(existingProducts);
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Failed to get a product" });
+    res.status(500).json({ error: "Failed to get products" });
+  }
+});
+
+router.get("/api/logged/user/cart", requireLogin, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to get a cart" });
   }
 });
 
