@@ -13,9 +13,11 @@ const ColumnsWrapper = styled.div`
   grid-template-columns: 1.3fr 0.8fr;
   gap: 40px;
   margin-top: 40px;
+  
 `;
 
 const Box = styled.div`
+  height: fit-content;
   background-color: #fff;
   border-radius: 10px;
   padding: 30px;
@@ -40,6 +42,17 @@ const RemoveButton = styled.button`
 const CityHolder = styled.div`
   display: flex;
   gap: 5px;
+`;
+
+const PaymentBlock = styled.div`
+    margin:30px 0;
+    display: flex;
+    gap: 10px;
+    flex-direction: column-reverse;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 `;
 
 const Cart = () => {
@@ -134,7 +147,7 @@ const Cart = () => {
         const response = await axios.post(
           "http://localhost:5000/api/make/order",
           {
-            name,email,city,postalCode,street,country,CartProducts,phone,APhone
+            name,email,city,postalCode,street,country,CartProducts,phone,APhone,total
           },
           {
             headers: {
@@ -180,7 +193,8 @@ const Cart = () => {
                         {item.title}
                       </td>
                       <td className="quantity_box">
-                        <PrimaryBtn
+                      <div>
+                      <PrimaryBtn
                           title="-"
                           onClick={() => lessOfTheProduct(item._id)}
                         />
@@ -191,6 +205,8 @@ const Cart = () => {
                           title="+"
                           onClick={() => moreOfTheProduct(item._id)}
                         />
+                      </div>
+                       
                       </td>
                       <td className="remove_item">
                         <RemoveButton>Remove</RemoveButton>
@@ -279,12 +295,20 @@ const Cart = () => {
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
               />
+              <PaymentBlock>
               <PrimaryBtn
                 black
                 block
                 title="Continue to payment"
                 onClick={makeOrder}
               />
+              <PrimaryBtn
+                black
+                block
+                title="Cash on delivery"
+                onClick={makeOrder}
+              />
+              </PaymentBlock>
             </form>
           </Box>
         )}

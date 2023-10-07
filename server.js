@@ -21,6 +21,7 @@ app.use(require("./routes/categories"))
 app.use(require("./routes/cart"))
 app.use(require("./routes/order"))
 app.use(require("./routes/user"))
+app.use(require("./routes/loggedUser"))
 
 // connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {

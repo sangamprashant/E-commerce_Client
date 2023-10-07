@@ -10,6 +10,8 @@ import Footer from "./Footer";
 import ProductOpen from "./ProductOpen";
 import Categories from "./Categories";
 import SubCategory from "./category/SubCategory";
+import Order from "./Order";
+import MyOrders from "./MyOrders";
 
 export {
   NavBar,
@@ -24,4 +26,6 @@ export {
   ProductOpen,
   Categories,
   SubCategory,
+  MyOrders,
+  Order,
 };

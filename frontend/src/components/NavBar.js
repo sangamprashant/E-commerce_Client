@@ -50,6 +50,7 @@ const NavBar = ({ toggleLog }) => {
     sessionStorage.clear();
     navigate("/");
     setLogged(false);
+    setCartProducts([])
     toast.success("Logged out successfully.")
   };
 

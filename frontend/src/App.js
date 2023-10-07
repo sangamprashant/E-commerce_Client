@@ -2,7 +2,7 @@ import "./App.css";
 import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AllProducts, Cart, Categories, Footer, Home, NavBar, ProductOpen, Signup } from "./components";
+import { AllProducts, Cart, Categories, Footer, Home, MyOrders, NavBar, Order, ProductOpen, Signup } from "./components";
 import { useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
 import axios from "axios";
@@ -12,6 +12,7 @@ function App() {
   const [products, setProducts] = useState([]);
   const [CartProducts, setCartProducts] = useState([])
   const [AllCategories,setAllcategories] = useState([])
+  const [Orders,setOrders] = useState([])
   const [toggleLog, setToggleLog] = useState(true)
   const [token,setToken] = useState(sessionStorage.getItem("token"))
   const [logged,setLogged] = useState(token?true:false)
@@ -22,7 +23,7 @@ function App() {
     fetchAllCategories();
     if(logged){
 
-      usersCart();
+      usersData();
     }
   }, [logged]);
 
@@ -55,15 +56,16 @@ function App() {
   setAllcategories(response.data)
  }
 
-  const usersCart = async () => {
+  const usersData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/logged/user/cart",        {
+      const response = await axios.get("http://localhost:5000/api/user/data",        {
         headers: {
           Authorization: "Bearer " + token, // Set the Authorization header
         },
       })
       if(response.status===200){
-        setCartProducts(response.data.carts)
+        setCartProducts(response.data.user.carts)
+        setOrders(response.data.user.orders)
       }
     } catch (error) {
       toast.error(error.response.data.message)
@@ -74,7 +76,7 @@ function App() {
 
   return (
     <BrowserRouter>
-    <CartContext.Provider value={{CartProducts, setCartProducts,setLogged,logged,token,setToken}}>
+    <CartContext.Provider value={{CartProducts, setCartProducts,setLogged,logged,token,setToken,Orders}}>
       <NavBar toggleLog={toggleLog}/>
       <Routes>
         <Route path="/" element={<Home FeaturedProduct={FeaturedProducts} products={products} logged={logged}/>} />
@@ -82,6 +84,8 @@ function App() {
         <Route path="/products" element={<AllProducts/>} />
         <Route path="/log" element={<Signup setToggleLog={setToggleLog}/>} />
         <Route path="/products/:id" element={<ProductOpen/>} />
+        <Route path="/myorder" element={<MyOrders/>} />
+        <Route path="/order/:data" element={<Order/>} />
         <Route path="/categories" element={<Categories AllCategories={AllCategories}/>} />
 
       </Routes>
