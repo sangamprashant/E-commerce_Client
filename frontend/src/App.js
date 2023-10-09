@@ -6,6 +6,12 @@ import { AllProducts, Cart, Categories, Footer, Home, MyOrders, NavBar, Order, P
 import { useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
 import axios from "axios";
+import styled from "styled-components";
+
+const ContentBelowMenu = styled.div`
+  margin-top: 170px; 
+  
+`;
 
 function App() {
   const [FeaturedProducts, setFeaturedProducts] = useState([]);
@@ -71,24 +77,23 @@ function App() {
       toast.error(error.response.data.message)
       
     }
-
   }
 
   return (
     <BrowserRouter>
-    <CartContext.Provider value={{CartProducts, setCartProducts,setLogged,logged,token,setToken,Orders}}>
+    <CartContext.Provider value={{CartProducts, setCartProducts,setLogged,logged,token,setToken,Orders,setOrders}}>
       <NavBar toggleLog={toggleLog}/>
-      <Routes>
-        <Route path="/" element={<Home FeaturedProduct={FeaturedProducts} products={products} logged={logged}/>} />
-        <Route path="/cart" element={<Cart/>} />
-        <Route path="/products" element={<AllProducts/>} />
-        <Route path="/log" element={<Signup setToggleLog={setToggleLog}/>} />
-        <Route path="/products/:id" element={<ProductOpen/>} />
-        <Route path="/myorder" element={<MyOrders/>} />
-        <Route path="/order/:data" element={<Order/>} />
-        <Route path="/categories" element={<Categories AllCategories={AllCategories}/>} />
+        <Routes>
+          <Route path="/" element={<Home FeaturedProduct={FeaturedProducts} products={products} logged={logged}/>} />
+          <Route path="/cart" element={<Cart/>} />
+          <Route path="/products" element={<AllProducts/>} />
+          <Route path="/log" element={<Signup setToggleLog={setToggleLog}/>} />
+          <Route path="/products/:id" element={<ProductOpen/>} />
+          <Route path="/myorder" element={<MyOrders/>} />
+          <Route path="/order/:data" element={<Order/>} />
+          <Route path="/categories" element={<Categories AllCategories={AllCategories}/>} />
 
-      </Routes>
+        </Routes>
       <Footer/>
       <ToastContainer theme="dark"/>
     </CartContext.Provider>

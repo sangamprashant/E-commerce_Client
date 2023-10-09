@@ -9,8 +9,19 @@ const ProductGrid = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 30px;
   padding-top: 0px;
-`;
 
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr 1fr 1fr; /* Three columns on larger screens */
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr 1fr; /* Two columns on tablets */
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
+`;
 
 const AllProducts = () => {
   const [allProducts, setAllProducts] = useState([]);

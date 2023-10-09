@@ -42,12 +42,13 @@ router.post("/api/make/order", requireLogin, async (req, res) => {
       }
   
       const order = new Order({
-        name, email, city, postalCode, street, country,line_items,phone,APhone,total,paid:false,status:"Ordered"
+        name, email, city, postalCode, street, country,line_items,phone,APhone,total,paid:false,status:"confirm"
       })
 
       const orderId = Array.isArray(order._id) ? order._id : [order._id];
 
       user.orders.push(...orderId);
+      user.carts=[]
       user.save();
       order.save();
   
@@ -58,19 +59,6 @@ router.post("/api/make/order", requireLogin, async (req, res) => {
     }
   });
   
-// router.get("/api/get/user/order",requireLogin, async(req,res)=>{
-//   const {_id} = req.user;
-//   // console.log(_id)
-//   const user = await User.findById({_id});
-//   if(!user){
-//     return res.status(404).json({message:"Invalid user"});
-//   }
-//   console.log(user.orders)
-//    return res.status(200).json({user})
-// })
-
-
-
 router.post("/api/order", async (req, res) => {
   try {
     const ids = req.body.ids;

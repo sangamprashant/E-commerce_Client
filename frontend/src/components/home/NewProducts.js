@@ -8,6 +8,14 @@ const ProductGrid = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 30px;
   padding-top: 0px;
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr 1fr; /* Two columns on tablets */
+  }
+
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
 `;
 
 const Title = styled.h2`
@@ -17,7 +25,6 @@ const Title = styled.h2`
 `;
 
 const NewProducts = ({ products }) => {
-  // console.log(products);
   return (
     <Center>
       <Title>New Arrivals</Title>

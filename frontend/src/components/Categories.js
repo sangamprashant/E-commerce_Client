@@ -7,7 +7,7 @@ import SubCategory from "./category/SubCategory";
 function Categories({ AllCategories }) {
   return (
     <Center>
-      <section className="text-gray-600 body-font">
+      <section className="text-gray-600 body-font py-7">
         {AllCategories &&
           AllCategories.map((category,index) => <SubCategory {...category}/>)}
       </section>

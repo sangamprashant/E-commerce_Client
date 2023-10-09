@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 const ProductWrapper = styled.div``;
 
-const Box = styled.div`
+const Box = styled(Link)`
   background-color: #fff;
   padding: 20px;
   height: 140px;
@@ -79,8 +79,8 @@ const ProductBox = ({ _id, title, description, price, images }) => {
 
   return (
     <ProductWrapper>
-      <Box>
-        <div>
+      <Box to={url}>
+        <div >
           <img src={images[0]} alt={title} />
         </div>
       </Box>

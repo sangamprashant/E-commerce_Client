@@ -20,7 +20,6 @@ router.post("/api/add/to/cart", requireLogin, async (req, res) => {
     const productIds = Array.isArray(productId) ? productId : [productId];
     // Add productIds to the user's cart
     user.carts.push(...productIds);
-    console.log(user);
     // Save the updated user document
     await user.save();
     res.status(200).json({ message: "Products added to cart successfully" });
@@ -105,17 +104,5 @@ router.post("/api/cart", async (req, res) => {
   }
 });
 
-// router.get("/api/logged/user/cart", requireLogin, async (req, res) => {
-//   try {
-//     const userId = req.user._id;
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     res.status(200).json({user});
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to get a cart" });
-//   }
-// });
 
 module.exports = router;

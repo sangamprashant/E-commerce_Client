@@ -5,15 +5,22 @@ import PrimaryBtn from "./comp/PrimaryBtn";
 import { CartContext } from "../CartContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "./comp/Input";
 
 const ColumnsWrapper = styled.div`
+  padding: 70px 0;
   display: grid;
   grid-template-columns: 1.3fr 0.8fr;
   gap: 40px;
   margin-top: 40px;
-  
+
+  @media (max-width: 992px) {
+    display: frid;
+    grid-template-columns: 1fr;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
 
 const Box = styled.div`
@@ -45,18 +52,20 @@ const CityHolder = styled.div`
 `;
 
 const PaymentBlock = styled.div`
-    margin:30px 0;
-    display: flex;
-    gap: 10px;
-    flex-direction: column-reverse;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
+  margin: 30px 0;
+  display: flex;
+  gap: 10px;
+  flex-direction: column-reverse;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Cart = () => {
-  const { CartProducts, setCartProducts, token } = useContext(CartContext);
+  const { CartProducts, setCartProducts, token, setOrders } =
+    useContext(CartContext);
+  const navigate = useNavigate()
   const [products, setProducts] = useState([]);
   // order information
   const [name, setName] = useState("");
@@ -65,8 +74,9 @@ const Cart = () => {
   const [postalCode, setPostalCode] = useState("");
   const [street, setStreet] = useState("");
   const [country, setCountry] = useState("");
-  const [phone,setPhone] = useState("")
-  const [APhone,setAPhone] = useState("")
+  const [phone, setPhone] = useState("");
+  const [APhone, setAPhone] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     fetchDetails();
@@ -83,7 +93,6 @@ const Cart = () => {
       setProducts([]);
     }
   };
-
   async function lessOfTheProduct(id) {
     try {
       const response = await axios.post(
@@ -133,13 +142,11 @@ const Cart = () => {
       console.error("Error:", error);
     }
   }
-
   let total = 0;
   for (const productId of CartProducts) {
     const price = products.find((p) => p._id === productId)?.price || 0;
     total += price;
   }
-
   const makeOrder = async (e) => {
     e.preventDefault();
     if (name && email && city && postalCode && street && country && phone) {
@@ -147,7 +154,16 @@ const Cart = () => {
         const response = await axios.post(
           "http://localhost:5000/api/make/order",
           {
-            name,email,city,postalCode,street,country,CartProducts,phone,APhone,total
+            name,
+            email,
+            city,
+            postalCode,
+            street,
+            country,
+            CartProducts,
+            phone,
+            APhone,
+            total,
           },
           {
             headers: {
@@ -155,33 +171,54 @@ const Cart = () => {
             },
           }
         );
-        if(response.status===200){
-          toast.success(response.data.message)
-          console.log(response.data.order)
-
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          setOrders((prev) => [...prev, response.data.order._id]);
+          setCartProducts([])
+          navigate("/myorder")
         }
       } catch (error) {
-        toast.error(error.response.data.message)
+        toast.error(error.response.data.message);
       }
-    }else{
-      toast.error("Please fill all the fields.")
+    } else {
+      toast.error("Please fill all the fields.");
     }
   };
+  const removeAllItems = async (id) => {
+    const response = await axios.post(
+      "http://localhost:5000/api/remove/all/from/cart",
+      { productId: id },
+      {
+        headers: {
+          Authorization: "Bearer " + token, // Set the Authorization header
+        },
+      }
+    );
+    if (response.status === 200) {
+      toast.success(response.data.message);
+      fetchDetails();
+      setCartProducts(CartProducts.filter((Products) => Products !== id));
+    }
+  };
+  //check if the product is deleted
+  const isPaymentDisabled = products.some((item) => item.isDeleted);
 
   return (
     <Center>
       <ColumnsWrapper>
-        <Box>
+        <Box className={` ${isMobile ? "mobile-hide" : ""}`}>
           <h2>Cart</h2>
           {products.length > 0 ? (
             <>
               <Table>
                 <thead>
                   {/* <th>Image</th> */}
-                  <th>Product</th>
-                  <th className="quantity_box">Quantity</th>
-                  <th>Remove</th>
-                  <th>Price</th>
+                  <tr>
+                    <th>Product</th>
+                    <th className="quantity_box">Quantity</th>
+                    <th>Remove</th>
+                    <th>Price</th>
+                  </tr>
                 </thead>
                 <tbody>
                   {products.map((item) => (
@@ -193,23 +230,33 @@ const Cart = () => {
                         {item.title}
                       </td>
                       <td className="quantity_box">
-                      <div>
-                      <PrimaryBtn
-                          title="-"
-                          onClick={() => lessOfTheProduct(item._id)}
-                        />
-                        <Quantity>
-                          {CartProducts.filter((id) => id === item._id).length}
-                        </Quantity>
-                        <PrimaryBtn
-                          title="+"
-                          onClick={() => moreOfTheProduct(item._id)}
-                        />
-                      </div>
-                       
+                        <div>
+                          <PrimaryBtn
+                            title="-"
+                            onClick={() => lessOfTheProduct(item._id)}
+                          />
+                          <Quantity>
+                            {
+                              CartProducts.filter((id) => id === item._id)
+                                .length
+                            }
+                          </Quantity>
+                          <PrimaryBtn
+                            title="+"
+                            onClick={() => moreOfTheProduct(item._id)}
+                          />
+                        </div>
                       </td>
                       <td className="remove_item">
-                        <RemoveButton>Remove</RemoveButton>
+                        {item.isDeleted && (
+                          <span className="cartWarning">
+                            Product is not avilable.
+                            <br />
+                          </span>
+                        )}
+                        <RemoveButton onClick={() => removeAllItems(item._id)}>
+                          Remove
+                        </RemoveButton>
                       </td>
                       <td>
                         ₹
@@ -226,13 +273,24 @@ const Cart = () => {
                   </tr>
                 </tbody>
               </Table>
+              <div className="mobile-show">
+                <PrimaryBtn
+                  black={1}
+                  block={1}
+                  title="Place the order"
+                  disabled={isPaymentDisabled}
+                  onClick={() => {
+                    setIsMobile(true);
+                  }}
+                />
+              </div>
             </>
           ) : (
             <div>cart is empty</div>
           )}
         </Box>
         {products.length > 0 && (
-          <Box>
+          <Box className={` ${isMobile ? "" : "mobile-hide"}`}>
             <form>
               <h2>Order information</h2>
               <Input
@@ -296,18 +354,41 @@ const Cart = () => {
                 onChange={(e) => setCountry(e.target.value)}
               />
               <PaymentBlock>
-              <PrimaryBtn
-                black
-                block
-                title="Continue to payment"
-                onClick={makeOrder}
-              />
-              <PrimaryBtn
-                black
-                block
-                title="Cash on delivery"
-                onClick={makeOrder}
-              />
+                <div className="mobile-show w-full">
+                  <PrimaryBtn
+                    type="button"
+                    black={1}
+                    block={1}
+                    title="Go to Cart"
+                    disabled={isPaymentDisabled}
+                    onClick={() => {
+                      setIsMobile(false);
+                    }}
+                  />
+                </div>
+                <PrimaryBtn
+                  black={1}
+                  block={1}
+                  title="Continue to payment"
+                  disabled={isPaymentDisabled}
+                  onClick={makeOrder}
+                />
+                <PrimaryBtn
+                  black={1}
+                  block={1}
+                  title="Cash on delivery"
+                  disabled={isPaymentDisabled}
+                  onClick={makeOrder}
+                />
+
+                {
+                  <p className=" text-right w-full">
+                    Amount:<span className="text-yellow-600">{total}</span>
+                  </p>
+                }
+                {isPaymentDisabled && (
+                  <p className="cartWarning">Action Needed</p>
+                )}
               </PaymentBlock>
             </form>
           </Box>

@@ -1,15 +1,19 @@
 import React, { useContext } from "react";
-import { Center } from "../CSSEXPORT";
 import styled from "styled-components";
 import PrimaryBtn from "../comp/PrimaryBtn";
-// import { useNavigate } from "react-router-dom";
 import ButtonLink from "../comp/ButtonLink";
 import Cart from "../Icons/Cart";
 import { CartContext } from "../../CartContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-// import { CartContext } from "../../CartContext";
+
+const Center = styled.div`
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+`;
+
 const Bg = styled.div`
   background-color: #222;
   color: #fff;
@@ -28,36 +32,56 @@ const Desc = styled.p`
 `;
 
 const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  img {
-    max-width: 100%;
-  }
-  div {
+  display: flex;
+  justify-content:center;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 40px;
   }
 `;
 
 const Colum = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  img{
-    width:400px;
-    height:400px;
-    ${'' /* object-fit:contain; */}
-    border-radius:20px;
+
+  @media (min-width: 768px) {
+    display: contents;
+    flex: 1;
+    align-items: flex-start;
+  }
+
+  img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+
+    @media (min-width: 768px) {
+      width: 400px;
+      height: 400px;
+    }
   }
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 0px;
   margin-top: 25px;
+  align-items: center;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
 `;
 
 const Featured = ({ product }) => {
-  // const { cartProducts, setCartProducts } = useContext(CartContext);
   const { CartProducts, setCartProducts, logged, token } =
     useContext(CartContext);
   const navigate = useNavigate();
@@ -134,7 +158,10 @@ const Featured = ({ product }) => {
             </div>
           </Colum>
           <Colum>
-            <img src={product.images && product?.images[0]} />
+            <img
+              src={product.images && product?.images[0]}
+              alt={product.title}
+            />
           </Colum>
         </Wrapper>
       </Center>
