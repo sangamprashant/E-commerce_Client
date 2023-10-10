@@ -6,10 +6,19 @@ import { CartContext } from "../../CartContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const ProductWrapper = styled.div``;
+const ProductWrapper = styled.div`
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  @media (max-width: 768px) {
+    /* Adjust styles for smaller screens here */
+    /* For example, you can change the layout or font size */
+    padding: 10px;
+  }
+`;
 
 const Box = styled(Link)`
-  background-color: #fff;
   padding: 20px;
   height: 140px;
   text-align: center;
@@ -17,9 +26,11 @@ const Box = styled(Link)`
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  img {
-    max-width: 100%;
-    max-height: 100px;
+
+  @media (max-width: 768px) {
+    /* Adjust styles for smaller screens here */
+    padding: 10px;
+    height: auto;
   }
 `;
 
@@ -29,6 +40,11 @@ const Title = styled(Link)`
   margin: 0;
   color: inherit;
   text-decoration: none;
+  max-width: 150px;
+  overflow: hidden;  
+  white-space: nowrap; 
+  display: inline-block;
+  text-overflow: ellipsis;
 `;
 
 const ProductInfoBox = styled.div`
@@ -48,7 +64,8 @@ const Price = styled.span`
 `;
 
 const ProductBox = ({ _id, title, description, price, images }) => {
-  const { CartProducts, setCartProducts, logged ,token} = useContext(CartContext);
+  const { CartProducts, setCartProducts, logged, token } =
+    useContext(CartContext);
   const url = "/products/" + _id;
 
   async function AddCart(id) {
@@ -62,14 +79,14 @@ const ProductBox = ({ _id, title, description, price, images }) => {
           },
         }
       );
-      
+
       if (response.status === 200) {
         toast.success(response.data.message);
-        setCartProducts(prev=>[...prev,_id])
+        setCartProducts((prev) => [...prev, _id]);
       }
     } catch (error) {
       // Handle errors here
-      toast.error(error.response.data.message)
+      toast.error(error.response.data.message);
       console.error("Error:", error);
     }
   }
@@ -80,7 +97,7 @@ const ProductBox = ({ _id, title, description, price, images }) => {
   return (
     <ProductWrapper>
       <Box to={url}>
-        <div >
+        <div>
           <img src={images[0]} alt={title} />
         </div>
       </Box>

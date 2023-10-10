@@ -118,7 +118,11 @@ const Signup = ({ setToggleLog }) => {
         <div className="container px-5 py-24 mx-auto flex flex-wrap items-center">
           <div className="lg:w-3/6 md:w-1/2 md:pr-16 lg:pr-5 pr-5">
             <h1 className="title-font font-medium text-3xl text-gray-900">{containerOpen ? "Happy To Connect" : "Welcome Back"}</h1>
-            <p className="leading-relaxed mt-4">{containerOpen ? "Poke slow-carb mixtape knausgaard, typewriter street art gentrify hammock starladder roathse. Craies vegan tousled etsy austin." : "Sign in"}</p>
+            <p className="leading-relaxed mt-4">
+              {containerOpen
+                ? "Discover a world of amazing products at our store. Sign up to start shopping!"
+                : "Happy to see you back! Sign in to continue shopping."}
+            </p>
           </div>
           {!EnterOtp ? (
             <form className="lg:w-3/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0" onSubmit={handleLog}>

@@ -1,15 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Center } from "./CSSEXPORT";
 import { Link, useLocation, useParams } from "react-router-dom";
+import styled from "styled-components";
+
+const Article = styled.article`
+ box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+`;
 
 const Order = () => {
   const location = useLocation();
   const { orderDatas } = location.state;
-  console.log(orderDatas)
 
   return <Center>
   <div className="container pt-12">
-    <article className="card">
+    <Article className="card rounded">
         <header className="card-header"> Order ID: {orderDatas._id} </header>
         <div className="card-body">
             <h6>Email: {orderDatas.email}</h6>
@@ -34,13 +38,12 @@ const Order = () => {
             <ul className="row">
                 {orderDatas.line_items.map((order,index)=>(<li className="col-md-4" key={index}>
                     <figure className="itemside mb-3">
-                        <div className="aside"><img src={order.priceData.product_data?.image} className="img-sm border "/></div>
+                        <div className="aside"><img src={order.price_data.product_data?.images[0]} className="img-sm border "/></div>
                         <figcaption className="info align-self-center">
-                            <p className="title">{order?.priceData.product_data?.name} <br/> {order.quantity}</p> <span className="text-muted">₹{order?.priceData.unit_amount} </span>
+                            <p className="title">{order?.price_data.product_data?.name} <br/> {order.quantity}</p> <span className="text-muted">₹{order?.price_data.unit_amount} </span>
                         </figcaption>
                     </figure>
-                </li>))}
-                
+                </li>))} 
             </ul>
             <hr/>
             <div className="d-flex justify-between items-center">
@@ -48,7 +51,7 @@ const Order = () => {
             <p >Order Amount: ₹{orderDatas.total}</p>
             </div>
         </div>
-    </article>
+    </Article>
 </div>
   
   </Center>;

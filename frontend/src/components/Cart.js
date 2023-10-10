@@ -5,7 +5,7 @@ import PrimaryBtn from "./comp/PrimaryBtn";
 import { CartContext } from "../CartContext";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Input from "./comp/Input";
 
 const ColumnsWrapper = styled.div`
@@ -65,7 +65,7 @@ const PaymentBlock = styled.div`
 const Cart = () => {
   const { CartProducts, setCartProducts, token, setOrders } =
     useContext(CartContext);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   // order information
   const [name, setName] = useState("");
@@ -77,10 +77,18 @@ const Cart = () => {
   const [phone, setPhone] = useState("");
   const [APhone, setAPhone] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     fetchDetails();
   }, [CartProducts]);
+  
+  useEffect(() => {
+    // Check if the URL contains "success"
+    if (window.location.href.includes("success")) {
+      makeOrder({ paid: false, paidStatus: true });
+    }
+  }, [(window.location.href)]);
 
   const fetchDetails = () => {
     if (CartProducts.length > 0) {
@@ -147,23 +155,15 @@ const Cart = () => {
     const price = products.find((p) => p._id === productId)?.price || 0;
     total += price;
   }
-  const makeOrder = async (e) => {
-    e.preventDefault();
+  const makeOrder = async ( {paid,paidStatus}) => {
+    console.log(paid,paidStatus)
+    // return
     if (name && email && city && postalCode && street && country && phone) {
       try {
         const response = await axios.post(
           "http://localhost:5000/api/make/order",
           {
-            name,
-            email,
-            city,
-            postalCode,
-            street,
-            country,
-            CartProducts,
-            phone,
-            APhone,
-            total,
+            name,email,city,postalCode,street,country,CartProducts,phone,APhone,total,paid,paidStatus
           },
           {
             headers: {
@@ -172,18 +172,26 @@ const Cart = () => {
           }
         );
         if (response.status === 200) {
-          toast.success(response.data.message);
-          setOrders((prev) => [...prev, response.data.order._id]);
-          setCartProducts([])
-          navigate("/myorder")
+          if(paid){
+            window.location.href = response.data.session.url;
+            // navigate(response.data.session.url);
+          }else{
+            console.log(response)
+            toast.success(response.data.message);
+            setOrders((prev) => [...prev, response.data.order._id]);
+            setCartProducts([]);
+            navigate("/myorder");
+          }
         }
       } catch (error) {
+        console.log(error)
         toast.error(error.response.data.message);
       }
     } else {
       toast.error("Please fill all the fields.");
     }
   };
+  
   const removeAllItems = async (id) => {
     const response = await axios.post(
       "http://localhost:5000/api/remove/all/from/cart",
@@ -369,16 +377,18 @@ const Cart = () => {
                 <PrimaryBtn
                   black={1}
                   block={1}
+                  type="button"
                   title="Continue to payment"
                   disabled={isPaymentDisabled}
-                  onClick={makeOrder}
+                  onClick={() => makeOrder({paid:true,paidStatus:false})}
                 />
                 <PrimaryBtn
+                  type="button"
                   black={1}
                   block={1}
                   title="Cash on delivery"
+                  onClick={() => makeOrder({paid:false,paidStatus:false})}
                   disabled={isPaymentDisabled}
-                  onClick={makeOrder}
                 />
 
                 {

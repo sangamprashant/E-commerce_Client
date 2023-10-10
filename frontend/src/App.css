@@ -1,7 +1,16 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Craska&display=swap");
+
 body {
   background-color: #eeeeee;
   font-family: "Open Sans", serif;
+}
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
 }
 .container {
   margin-top: 50px;
@@ -163,7 +172,7 @@ body {
   display: block;
 }
 .mobile-show {
-    display: none;
+  display: none;
 }
 
 @media (max-width: 992px) {

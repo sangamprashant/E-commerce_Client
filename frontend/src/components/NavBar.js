@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { CartContext } from "../CartContext";
 import { toast } from "react-toastify";
+import icon from "./Images/icon2.png";
+import title from "./Images/title.png";
 
 const StyledHeader = styled.header`
   position: fixed;
@@ -16,6 +18,34 @@ const StyledHeader = styled.header`
 const Logo = styled(Link)`
   color: #fff;
   text-decoration: none;
+  font-size: 30px;
+  div {
+    display: flex;
+    align-items: center;
+  }
+  .logo-icon {
+    width: 60px;
+    height: 60px;
+  }
+  .logo-title{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: flex-end;
+  }
+  .logo-title img {
+    width: 100px;
+    height: 30px;
+  }
+  .logo-title p {
+    font-size:10px;
+  }
+  &:hover {
+    color: #fff;
+    text-decoration: none;
+  }
 `;
 
 const NavCenter = styled.div`
@@ -53,6 +83,9 @@ const NavLink = styled(Link)`
   text-decoration: none;
   margin: 10px 0;
   white-space: nowrap; /* Prevent content from wrapping */
+  &:hover {
+    text-decoration: none;
+  }
 `;
 
 const Count = styled.sup`
@@ -146,7 +179,16 @@ const NavBar = ({ toggleLog }) => {
         <NavCenter>
           <Wraper>
             <div className="flex w-full justify-between">
-              <Logo to="/">Ecommerce</Logo>
+              <Logo to="/">
+                <div>
+                  <img className="logo-icon" src={icon} />
+                  <div className="logo-title">
+                    <img className="" src={title} />
+
+                    <p>EDGE OF YOUR BODY</p>
+                  </div>
+                </div>
+              </Logo>
               <ToggleButton onClick={toggleMenu}>&#9776;</ToggleButton>
             </div>
             <StyledNav isOpen={isOpen}>

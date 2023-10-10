@@ -9,8 +9,8 @@ import { toast } from "react-toastify";
 const MainContainer = styled.div`
   margin: 150px auto;
   padding: 20px;
-  background-color: white;
   border-radius: 20px;
+  background-color:#f7fbff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
@@ -23,12 +23,11 @@ const Title = styled.h1`
 `;
 
 const ProductTable = styled.div`
-  background-color: black;
-  color: white;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 10px;
   cursor: pointer;
+  background-color: #e2e2e2;
   span {
     color: yellow;
   }
@@ -36,6 +35,10 @@ const ProductTable = styled.div`
     display: flex;
     justify-content: space-between;
   }
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
+  &:hover{
+  background-color: #eee;
+  } 
 `;
 
 const TableRow = styled.div`
@@ -65,9 +68,27 @@ const TableRow = styled.div`
   }
 `;
 
+const StatusFilterDropdown = styled.select`
+  background-color: transparent;
+  border: none; /* Remove the border */
+  cursor: pointer;
+  margin-right: 10px;
+  width: 100%;
+  border: 1px solid gray; /* Add a border on focus */
+  &:focus {
+    border: none; /* Remove the border on focus */
+  }
+  &:hover {
+    border: none; /* Remove the border on hover */
+  }
+`;
+
 const MyOrders = () => {
-  const { CartProducts, setCartProducts, token, Orders } = useContext(CartContext);
+  const { CartProducts, setCartProducts, token, Orders } =
+    useContext(CartContext);
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,6 +99,7 @@ const MyOrders = () => {
     axios
       .post("http://localhost:5000/api/order", { ids: Orders })
       .then((response) => {
+        console.log(response)
         setOrders(response.data);
       })
       .catch((error) => {
@@ -85,23 +107,63 @@ const MyOrders = () => {
       });
   };
 
+  useEffect(() => {
+    // Filter orders based on selectedStatus
+    if (selectedStatus === "all") {
+      setFilteredOrders(orders);
+    } else {
+      const filtered = orders.filter(
+        (order) => order.status === selectedStatus
+      );
+      setFilteredOrders(filtered);
+    }
+  }, [selectedStatus, orders]);
+
+  // Define your order statuses
+  const orderStatusOptions = [
+    "confirm",
+    "packing",
+    "packed",
+    "shipping",
+    "out to deliver",
+    "delivered",
+    "canceled",
+  ];
+
   return (
     <Center>
       <MainContainer>
         <Title>My Orders</Title>
-        {orders.length > 0 &&
-          orders.map((order, index) => (
+
+        <div className="my-3">
+          {/* Filter dropdown */}
+          <StatusFilterDropdown
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            value={selectedStatus}
+          >
+            <option key={"all"} value="all"> All </option>
+            {orderStatusOptions.map((status) => (
+              <option key={status} value={status}>
+                {status === "all" ? "All" : status}
+              </option>
+            ))}
+          </StatusFilterDropdown>
+        </div>
+        {filteredOrders.length > 0 ? (
+          filteredOrders.map((order, index) => (
             <ProductTable
               key={index}
               onClick={() =>
-                navigate(`/order/${order._id}`, { state: { orderDatas: order } })
+                navigate(`/order/${order._id}`, {
+                  state: { orderDatas: order },
+                })
               }
             >
               {order.line_items.map((item, key) => (
                 <TableRow key={key}>
-                  <img src={item.priceData.product_data.image} alt="Product" />
+                  <img src={item.price_data.product_data.images[0]} alt="Product" />
                   <div>
-                    <h4>{item.priceData.product_data.name}</h4>
+                    <h4>{item.price_data.product_data.name}</h4>
                     <p>
                       Quantity: <span>{item.quantity}</span>
                     </p>
@@ -117,7 +179,10 @@ const MyOrders = () => {
                 </div>
               </div>
             </ProductTable>
-          ))}
+          ))
+        ) : (
+          <p>No orders found.</p>
+        )}
       </MainContainer>
     </Center>
   );
