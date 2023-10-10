@@ -71,7 +71,7 @@ const ProductBox = ({ _id, title, description, price, images }) => {
   async function AddCart(id) {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/add/to/cart",
+        "/api/add/to/cart",
         { productId: id }, // Send the product ID in the request body
         {
           headers: {

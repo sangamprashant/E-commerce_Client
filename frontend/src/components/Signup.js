@@ -50,7 +50,7 @@ const Signup = ({ setToggleLog }) => {
       setLogLoading(true);
       try {
         const response = await axios.post(
-          "http://localhost:5000/signup/new/user",
+          "/signup/new/user",
           formData
         );
         if (response.status === 200) {
@@ -72,7 +72,7 @@ const Signup = ({ setToggleLog }) => {
       setLogLoading(true);
       try {
         const response = await axios.post(
-          "http://localhost:5000/verify/user/email",
+          "/verify/user/email",
           formData
         );
         if (response.status === 200) {
@@ -89,7 +89,7 @@ const Signup = ({ setToggleLog }) => {
       setLogLoading(true);
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/user/do/login",
+          "/api/user/do/login",
           formData
         );
         if (response.status === 200) {

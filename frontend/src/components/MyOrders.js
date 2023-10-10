@@ -97,7 +97,12 @@ const MyOrders = () => {
 
   const fetchDetails = () => {
     axios
-      .post("http://localhost:5000/api/order", { ids: Orders })
+      .post("/api/order", { ids: Orders },
+      {
+        headers: {
+          Authorization: "Bearer " + token, // Set the Authorization header
+        },
+      })
       .then((response) => {
         console.log(response)
         setOrders(response.data);

@@ -35,7 +35,7 @@ function App() {
 
   const fetchFeatured = () => {
     // Make an HTTP GET request to fetch FeaturedProducts
-    fetch("http://localhost:5000/api/products/6511b52ee7ea010ee99afb59")
+    fetch("/api/products/6511b52ee7ea010ee99afb59")
       .then((response) => response.json())
       .then((data) => {
         setFeaturedProducts(data);
@@ -46,7 +46,7 @@ function App() {
   };
 
   const fetchAllproduct = async ()=>{
-    await fetch("http://localhost:5000/api/products/latest")
+    await fetch("/api/products/latest")
       .then((response) => response.json())
       .then((data) => {
         // console.log(data)
@@ -58,13 +58,13 @@ function App() {
   }
 
  const fetchAllCategories = async () => {
-  const response = await axios.get("http://localhost:5000/api/categories")
+  const response = await axios.get("/api/categories")
   setAllcategories(response.data)
  }
 
   const usersData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/user/data",        {
+      const response = await axios.get("/api/user/data",        {
         headers: {
           Authorization: "Bearer " + token, // Set the Authorization header
         },

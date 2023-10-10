@@ -89,7 +89,7 @@ const Featured = ({ product }) => {
   async function addfeatureProductToCart() {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/add/to/cart",
+        "/api/add/to/cart",
         { productId: product._id }, // Send the product ID in the request body
         {
           headers: {

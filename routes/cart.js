@@ -90,7 +90,7 @@ router.post("/api/remove/all/from/cart", requireLogin, async (req, res) => {
   }
 });
 
-router.post("/api/cart", async (req, res) => {
+router.post("/api/cart",requireLogin, async (req, res) => {
   try {
     const ids = req.body.ids;
     // Find products based on the provided product IDs

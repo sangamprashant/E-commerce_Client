@@ -31,7 +31,7 @@ const SubCategory = ({ _id, name }) => {
   async function fetchData() {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/products/by/category/${name}`
+        `/api/products/by/category/${name}`
       );
       if (response.status === 200) {
         setProducts(response.data);

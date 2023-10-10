@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CartContext } from '../CartContext';
 import Cart from './Icons/Cart';
+import { toast } from 'react-toastify';
 
 const ProductOpen = () => {
   const [product, setProduct] = useState({});
@@ -10,7 +11,7 @@ const ProductOpen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const { CartProducts, setCartProducts, setLogged, logged } = useContext(CartContext);
+  const { CartProducts, setCartProducts, setLogged, logged , token} = useContext(CartContext);
 
   const { id } = useParams();
 
@@ -29,7 +30,7 @@ const ProductOpen = () => {
 
   async function handleFetch() {
     try {
-      const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+      const response = await axios.get(`/api/products/${id}`);
       setProduct(response.data);
       setIsLoading(false);
     } catch (err) {
@@ -43,8 +44,29 @@ const ProductOpen = () => {
     setSelectedImageIndex(index);
   };
 
-  function addFeatureProductToCart() {
-    setCartProducts((prev) => [...prev, product._id]);
+  async function addFeatureProductToCart() {
+    // setCartProducts((prev) => [...prev, product._id]);
+
+    try {
+      const response = await axios.post(
+        "/api/add/to/cart",
+        { productId: product._id }, // Send the product ID in the request body
+        {
+          headers: {
+            Authorization: "Bearer " + token, // Set the Authorization header
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        setCartProducts((prev) => [...prev, product._id]);
+      }
+    } catch (error) {
+      // Handle errors here
+      toast.error(error.response.data.message);
+      console.error("Error:", error);
+    }
   }
 
   const [isInCart, setIsInCart] = useState(false);

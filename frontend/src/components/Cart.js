@@ -83,17 +83,21 @@ const Cart = () => {
     fetchDetails();
   }, [CartProducts]);
   
-  useEffect(() => {
-    // Check if the URL contains "success"
-    if (window.location.href.includes("success")) {
-      makeOrder({ paid: false, paidStatus: true });
-    }
-  }, [(window.location.href)]);
+  // useEffect(() => {
+  //   // Check if the URL contains "success"
+  //   if (window.location.href.includes("success")) {
+  //     makeOrder({ paid: false, paidStatus: true });
+  //   }
+  // }, [(window.location.href)]);
 
   const fetchDetails = () => {
     if (CartProducts.length > 0) {
       axios
-        .post("http://localhost:5000/api/cart", { ids: CartProducts })
+        .post("/api/cart", { ids: CartProducts },{
+          headers: {
+            Authorization: "Bearer " + token, // Set the Authorization header
+          },
+        })
         .then((response) => {
           setProducts(response.data);
         });
@@ -104,7 +108,7 @@ const Cart = () => {
   async function lessOfTheProduct(id) {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/remove/from/cart",
+        "/api/remove/from/cart",
         { productId: id }, // Send the product ID in the request body
         {
           headers: {
@@ -132,7 +136,7 @@ const Cart = () => {
   async function moreOfTheProduct(id) {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/add/to/cart",
+        "/api/add/to/cart",
         { productId: id }, // Send the product ID in the request body
         {
           headers: {
@@ -155,15 +159,15 @@ const Cart = () => {
     const price = products.find((p) => p._id === productId)?.price || 0;
     total += price;
   }
-  const makeOrder = async ( {paid,paidStatus}) => {
-    console.log(paid,paidStatus)
+  const makeOrder = async ( ) => {
+    // console.log(paid,paidStatus)
     // return
     if (name && email && city && postalCode && street && country && phone) {
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/make/order",
+          "/api/make/order",
           {
-            name,email,city,postalCode,street,country,CartProducts,phone,APhone,total,paid,paidStatus
+            name,email,city,postalCode,street,country,CartProducts,phone,APhone,total,
           },
           {
             headers: {
@@ -172,17 +176,14 @@ const Cart = () => {
           }
         );
         if (response.status === 200) {
-          if(paid){
-            window.location.href = response.data.session.url;
-            // navigate(response.data.session.url);
-          }else{
+         
             console.log(response)
             toast.success(response.data.message);
             setOrders((prev) => [...prev, response.data.order._id]);
             setCartProducts([]);
             navigate("/myorder");
-          }
         }
+      
       } catch (error) {
         console.log(error)
         toast.error(error.response.data.message);
@@ -194,7 +195,7 @@ const Cart = () => {
   
   const removeAllItems = async (id) => {
     const response = await axios.post(
-      "http://localhost:5000/api/remove/all/from/cart",
+      "/api/remove/all/from/cart",
       { productId: id },
       {
         headers: {
@@ -204,8 +205,9 @@ const Cart = () => {
     );
     if (response.status === 200) {
       toast.success(response.data.message);
+      // setCartProducts(CartProducts.filter((Products) => Products !== id));
+      setCartProducts(CartProducts.filter((product) => product !== id));
       fetchDetails();
-      setCartProducts(CartProducts.filter((Products) => Products !== id));
     }
   };
   //check if the product is deleted
@@ -374,14 +376,14 @@ const Cart = () => {
                     }}
                   />
                 </div>
-                <PrimaryBtn
+                {/* <PrimaryBtn
                   black={1}
                   block={1}
                   type="button"
                   title="Continue to payment"
                   disabled={isPaymentDisabled}
                   onClick={() => makeOrder({paid:true,paidStatus:false})}
-                />
+                /> */}
                 <PrimaryBtn
                   type="button"
                   black={1}

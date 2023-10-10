@@ -88,7 +88,6 @@ router.post("/signup/new/user", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 // Login route
 router.post("/api/user/do/login", async (req, res) => {
   try {
