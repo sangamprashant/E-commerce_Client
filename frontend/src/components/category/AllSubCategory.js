@@ -30,10 +30,10 @@ const Title = styled.h1`
 
 const Loading = styled.div`
   text-align: center;
-  padding: 20px;
+  padding-top:30px;
 `;
 
-const SubCategory = ({ _id, name }) => {
+const AllSubCategory = ({ _id, name }) => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -58,24 +58,18 @@ const SubCategory = ({ _id, name }) => {
 
   return (
     <div>
-      <Loading>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : products.length > 0 ? (
-          <div>
-            <Title>{name}</Title>
-            <ProductGrid>
-              {products?.map((product) => (
-                <ProductBox {...product} key={product._id} />
-              ))}
-            </ProductGrid>
-          </div>
-        ) : (
-          <p>No products available in this category.</p>
-        )}
-      </Loading>
+      {products.length > 0 && (
+        <Loading>
+          <Title>{name}</Title>
+          <ProductGrid>
+            {products?.map((product) => (
+              <ProductBox {...product} key={product._id} />
+            ))}
+          </ProductGrid>
+        </Loading>
+      )}
     </div>
   );
 };
 
-export default SubCategory;
+export default AllSubCategory;

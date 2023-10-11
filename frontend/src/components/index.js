@@ -12,6 +12,7 @@ import Categories from "./Categories";
 import SubCategory from "./category/SubCategory";
 import Order from "./Order";
 import MyOrders from "./MyOrders";
+import SignIn from "./SignIn";
 
 export {
   NavBar,
@@ -28,4 +29,5 @@ export {
   SubCategory,
   MyOrders,
   Order,
+  SignIn,
 };

@@ -62,6 +62,44 @@ const PaymentBlock = styled.div`
   align-items: center;
 `;
 
+const ErrorMessageBox = styled.div`
+  color: red;
+  font-weight: bold;
+  text-align: center;
+`;
+
+const LoadingBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+`;
+
+const LoadingMessage = styled.p`
+  font-weight: bold;
+`;
+
+const LoadingSpinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.3);
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const Cart = () => {
   const { CartProducts, setCartProducts, token, setOrders } =
     useContext(CartContext);
@@ -77,32 +115,40 @@ const Cart = () => {
   const [phone, setPhone] = useState("");
   const [APhone, setAPhone] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  const location = useLocation();
+  const [error, setError] = useState(null); // State for error handling
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDetails();
+    if (!token) {
+      navigate("/signin");
+    } else {
+      fetchDetails();
+    }
   }, [CartProducts]);
-  
-  // useEffect(() => {
-  //   // Check if the URL contains "success"
-  //   if (window.location.href.includes("success")) {
-  //     makeOrder({ paid: false, paidStatus: true });
-  //   }
-  // }, [(window.location.href)]);
 
   const fetchDetails = () => {
+    setError(null); // Clear any previous errors
     if (CartProducts.length > 0) {
       axios
-        .post("/api/cart", { ids: CartProducts },{
-          headers: {
-            Authorization: "Bearer " + token, // Set the Authorization header
-          },
-        })
+        .post(
+          "/api/cart",
+          { ids: CartProducts },
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
         .then((response) => {
           setProducts(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setError(error); // Set the error state
         });
     } else {
-      setProducts([]);
+      setLoading(false);
     }
   };
   async function lessOfTheProduct(id) {
@@ -159,7 +205,7 @@ const Cart = () => {
     const price = products.find((p) => p._id === productId)?.price || 0;
     total += price;
   }
-  const makeOrder = async ( ) => {
+  const makeOrder = async () => {
     // console.log(paid,paidStatus)
     // return
     if (name && email && city && postalCode && street && country && phone) {
@@ -167,7 +213,16 @@ const Cart = () => {
         const response = await axios.post(
           "/api/make/order",
           {
-            name,email,city,postalCode,street,country,CartProducts,phone,APhone,total,
+            name,
+            email,
+            city,
+            postalCode,
+            street,
+            country,
+            CartProducts,
+            phone,
+            APhone,
+            total,
           },
           {
             headers: {
@@ -176,23 +231,56 @@ const Cart = () => {
           }
         );
         if (response.status === 200) {
-         
-            console.log(response)
-            toast.success(response.data.message);
-            setOrders((prev) => [...prev, response.data.order._id]);
-            setCartProducts([]);
-            navigate("/myorder");
+          console.log(response);
+          toast.success(response.data.message);
+          setOrders((prev) => [...prev, response.data.order._id]);
+          setCartProducts([]);
+          navigate("/myorder");
         }
-      
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast.error(error.response.data.message);
       }
     } else {
       toast.error("Please fill all the fields.");
     }
   };
-  
+
+  // const makeOrderCash = async ( ) => {
+  //   // console.log(paid,paidStatus)
+  //   // return
+  //   if (name && email && city && postalCode && street && country && phone) {
+  //     try {
+  //       const response = await axios.post(
+  //         "/api/make/order/paid",
+  //         {
+  //           name,email,city,postalCode,street,country,CartProducts,phone,APhone,total,
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: "Bearer " + token, // Set the Authorization header
+  //           },
+  //         }
+  //       );
+  //       console.log(response )
+  //       if (response.status === 200) {
+
+  //           // console.log(response)
+  //           // toast.success(response.data.message);
+  //           // setOrders((prev) => [...prev, response.data.order._id]);
+  //           // setCartProducts([]);
+  //           window.location.href=response?.data?.session?.url;
+  //       }
+
+  //     } catch (error) {
+  //       console.log(error)
+  //       // toast.error(error.response.message);
+  //     }
+  //   } else {
+  //     toast.error("Please fill all the fields.");
+  //   }
+  // };
+
   const removeAllItems = async (id) => {
     const response = await axios.post(
       "/api/remove/all/from/cart",
@@ -218,7 +306,9 @@ const Cart = () => {
       <ColumnsWrapper>
         <Box className={` ${isMobile ? "mobile-hide" : ""}`}>
           <h2>Cart</h2>
-          {products.length > 0 ? (
+          {error ? ( // Display error message if an error occurs
+            <ErrorMessageBox>Error: {error.message}</ErrorMessageBox>
+          ) : products.length > 0 ? (
             <>
               <Table>
                 <thead>
@@ -295,8 +385,13 @@ const Cart = () => {
                 />
               </div>
             </>
+          ) : loading ? ( // Display the loading component
+            <LoadingBox>
+              <LoadingMessage>Loading...</LoadingMessage>
+              <LoadingSpinner />
+            </LoadingBox>
           ) : (
-            <div>cart is empty</div>
+            <div>Cart is empty</div>
           )}
         </Box>
         {products.length > 0 && (
@@ -376,20 +471,20 @@ const Cart = () => {
                     }}
                   />
                 </div>
-                {/* <PrimaryBtn
+                {/* <PrimaryBtn 
                   black={1}
                   block={1}
                   type="button"
                   title="Continue to payment"
                   disabled={isPaymentDisabled}
-                  onClick={() => makeOrder({paid:true,paidStatus:false})}
-                /> */}
+                  onClick={() => makeOrderCash({paid:true,paidStatus:false})}
+                />  */}
                 <PrimaryBtn
                   type="button"
                   black={1}
                   block={1}
                   title="Cash on delivery"
-                  onClick={() => makeOrder({paid:false,paidStatus:false})}
+                  onClick={() => makeOrder({ paid: false, paidStatus: false })}
                   disabled={isPaymentDisabled}
                 />
 

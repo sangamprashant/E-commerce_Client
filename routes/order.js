@@ -87,5 +87,90 @@ router.post("/api/order", requireLogin, async (req, res) => {
     res.status(500).json({ message: "Failed to get products" });
   }
 });
+router.put("/api/orders/update-status/:orderId", requireLogin, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
 
+    // Update the order status by orderId
+    await Order.findByIdAndUpdate(orderId, { status });
+
+    res.status(200).json({ message: "Order status updated successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+//stripe payment path
+// router.post("/api/make/order/paid", requireLogin, async (req, res) => {
+//   try {
+//     const { name,email,city,postalCode,street,country,CartProducts,phone,APhone,total, } = req.body;
+//     const user = await User.findById({ _id: req.user._id });
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//       if (!Array.isArray(CartProducts)) {
+//       return res.status(400).json({ message: "CartProducts should be an array" });
+//     }
+
+//     const uniqueIds = [...new Set(CartProducts)];
+//     const ProductInfos = await Product.find({ _id: uniqueIds });
+
+//     let line_items = [];
+//     for (const productId of uniqueIds) {
+//       const productInfo = ProductInfos.find(p => p._id.toString() === productId);
+//       const quantity = CartProducts.reduce((count, id) => (id === productId ? count + 1 : count), 0);
+//       if (quantity > 0 && productInfo) {
+//         line_items.push({
+//           quantity,
+//           price_data: {
+//             currency: "inr",
+//             product_data: { 
+//               name: productInfo.title,
+//               images:productInfo.images,
+//              },
+//             unit_amount: quantity * productInfo.price*100,
+//           },
+//         });
+//       }
+//     }
+
+//     const order = await new Order({
+//       name, email, city, postalCode, street, country,line_items,phone,APhone,total,paid:false,status:"confirm"
+//     })
+
+//     // Create a Stripe payment session
+//     console.log('order._id:', order._id);
+//     if(order._id){
+//       const session = await stripe.checkout.sessions.create({
+//         line_items,
+//         mode: 'payment',
+//         customer_email: email,
+//         success_url: "http://localhost:3000/cart?success=1",
+//         cancel_url: "http://localhost:3000/cart?failed=1",
+//         metadata: { orderId: order?._id.toString(), test: "ok" },
+//       });
+//       return res.status(200).json({ message: "Payment session created", session });
+//     }else{
+//       console.log("no id of order")
+//     }
+    
+    
+//       // console.log(session);
+
+
+//     // const orderId = Array.isArray(order._id) ? order._id : [order._id];
+
+//     // user.orders.push(...orderId);
+//     // user.carts=[]
+//     // await user.save();
+//     // await order.save();
+
+//     // return res.status(200).json({ message: "Updated",order });
+//   } catch (error) {
+//     console.log("error", error);
+//     return res.status(500).json({ message: "Server error." });
+//   }
+// });
 module.exports = router;

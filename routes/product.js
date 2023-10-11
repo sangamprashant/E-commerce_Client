@@ -5,7 +5,7 @@ const Product = mongoose.model("product");
 
 router.get("/api/products", async (req, res) => {
   try {
-    const products = await Product.find({}).populate("category");
+    const products = await Product.find({isDeleted:false}).populate("category").sort({ _id: -1 });
     res.status(200).json(products);
   } catch (error) {
     console.error("Error:", error);
@@ -15,7 +15,7 @@ router.get("/api/products", async (req, res) => {
 
 router.get("/api/products/latest", async (req, res) => {
   try {
-    const products = await Product.find({}).sort({ _id: -1 }).limit(4);
+    const products = await Product.find({isDeleted:false}).sort({ _id: -1 }).limit(4);
     res.status(200).json(products);
   } catch (error) {
     console.error("Error:", error);
@@ -38,12 +38,12 @@ router.get("/api/products/by/category/:name", async (req, res) => {
   try {
     const { name } = req.params;
     // console.log(name)
-     await Product.find({})
+     await Product.find({isDeleted:false})
       .populate({
         path: "category",
         match: { name: name }, 
         select: "name", 
-      })
+      }).sort({ _id: -1 })
       .then(( products) => {
           // Filter products that have a matching category
           const filteredProducts = products.filter(

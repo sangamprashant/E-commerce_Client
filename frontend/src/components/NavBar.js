@@ -165,10 +165,14 @@ const NavBar = ({ toggleLog }) => {
         </>
       );
     } else {
-      return (
-        <NavLink to="/log" onClick={closeMenu}>
+      return (<>
+{/* <NavLink to="/log" onClick={closeMenu}>
           {!toggleLog ? "Login" : "Get Started"}
-        </NavLink>
+        </NavLink> */}
+        <NavLink to="/signin"> SignIn </NavLink>
+        <NavLink to="/signup"> SignUp </NavLink>
+      </>
+        
       );
     }
   };

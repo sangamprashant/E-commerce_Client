@@ -32,7 +32,7 @@ router.post("/verify/user/email", async (req, res) => {
   Thank you for your cooperation.
   
   Best regards,
-  DrDoc`;
+  Kloth`;
 
   // Create a Nodemailer transporter
   let transporter = nodemailer.createTransport({
@@ -45,12 +45,11 @@ router.post("/verify/user/email", async (req, res) => {
 
   // Set up email data
   let mailOptions = {
-    from: `"DrDoc" <${process.env.EMAIL}>`, // Replace with your own name and email address
+    from: `"Kloth" <${process.env.EMAIL}>`, 
     to: email,
     subject: subject,
     text: message,
   };
-
   // Send the email
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {

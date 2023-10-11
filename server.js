@@ -14,6 +14,9 @@ require('./models/product')
 require('./models/categories')
 require('./models/user')
 require('./models/order')
+require('./models/subscription')
+require('./models/contact')
+
 
 app.use(require("./routes/product"))
 app.use(require("./routes/categories"))
@@ -21,13 +24,16 @@ app.use(require("./routes/cart"))
 app.use(require("./routes/order"))
 app.use(require("./routes/user"))
 app.use(require("./routes/loggedUser"))
+app.use(require("./routes/subscription"))
+app.use(require("./routes/contact"))
+// stripe webhook
 // app.use(require("./routes/webhook"))
 
 // connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  dbName: "next_ecommerce",
+  dbName: process.env.MONGODB_DATABADE,
 }).then(() => {
   console.log('Connected to MongoDB');
 }).catch((error) => {

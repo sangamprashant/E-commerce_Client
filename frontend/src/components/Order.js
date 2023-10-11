@@ -1,15 +1,45 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Center } from "./CSSEXPORT";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { CartContext } from "../CartContext";
 
 const Article = styled.article`
  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 `;
 
 const Order = () => {
+    const { CartProducts, setCartProducts, token, Orders } =
+    useContext(CartContext);
   const location = useLocation();
   const { orderDatas } = location.state;
+  const navigate = useNavigate()
+
+  const handelCancel = async () => {
+    try {
+        // Send a PUT request to update the order status
+        const response = await axios.put(
+          `/api/orders/update-status/${orderDatas._id}`,
+          {
+            status: "canceled",
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          navigate("/myorder")
+        }
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
+  }
 
   return <Center>
   <div className="container pt-12">
@@ -23,7 +53,7 @@ const Order = () => {
                     <div className="col"> <strong>Shipping Address:</strong> <br/> {orderDatas.street} | {orderDatas.city} | {orderDatas.postalCode}</div>
                     <div className="col"> <strong>Shipping TO:</strong> <br/> {orderDatas.name} | <i className="fa fa-phone"></i> {orderDatas.phone} | {orderDatas.APhone} </div>
                     {((orderDatas.status==="delivered"||orderDatas.status==="canceled"))&&<div className="col"> <strong>Status:</strong> <br/> {orderDatas.status}</div>}
-                    {(orderDatas.status==="confirm"||orderDatas.status==="packing"||orderDatas.status==="packed"||orderDatas.status==="shipping"||orderDatas.status==="out to deliver")&&<div className="col"> <strong>Cancel:</strong><br/><button className="btn btn-danger w-full">Cancel</button> </div>}
+                    {(orderDatas.status==="confirm"||orderDatas.status==="packing"||orderDatas.status==="packed"||orderDatas.status==="shipping"||orderDatas.status==="out to deliver")&&<div className="col"> <strong>Cancel:</strong><br/><button onClick={()=>{handelCancel()}} className="btn btn-danger w-full">Cancel</button> </div>}
                 </div>
             </article>
             {((orderDatas.status!=="delivered"&&orderDatas.status!=="canceled"))&&<div className="track">

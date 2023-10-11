@@ -10,7 +10,7 @@ const MainContainer = styled.div`
   margin: 150px auto;
   padding: 20px;
   border-radius: 20px;
-  background-color:#f7fbff;
+  background-color: #f7fbff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
@@ -29,16 +29,16 @@ const ProductTable = styled.div`
   cursor: pointer;
   background-color: #e2e2e2;
   span {
-    color: yellow;
+    color: red;
   }
   .Details {
     display: flex;
     justify-content: space-between;
   }
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
-  &:hover{
-  background-color: #eee;
-  } 
+  &:hover {
+    background-color: #eee;
+  }
 `;
 
 const TableRow = styled.div`
@@ -70,16 +70,46 @@ const TableRow = styled.div`
 
 const StatusFilterDropdown = styled.select`
   background-color: transparent;
-  border: none; /* Remove the border */
+  border: none;
   cursor: pointer;
   margin-right: 10px;
   width: 100%;
-  border: 1px solid gray; /* Add a border on focus */
+  border: 1px solid gray;
   &:focus {
-    border: none; /* Remove the border on focus */
+    border: none;
   }
   &:hover {
-    border: none; /* Remove the border on hover */
+    border: none;
+  }
+
+  option {
+    &.all {
+      font-weight: bold;
+    }
+
+    span {
+      color: red;
+      text-align: right;
+    }
+  }
+`;
+
+const SkeletonLoader = styled.div`
+  /* Define your skeleton loading effect using CSS */
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite linear;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 `;
 
@@ -90,22 +120,30 @@ const MyOrders = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("all");
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchDetails();
+    if (!token) {
+      navigate("/signin");
+    } else {
+      fetchDetails();
+    }
   }, [Orders]);
 
   const fetchDetails = () => {
     axios
-      .post("/api/order", { ids: Orders },
-      {
-        headers: {
-          Authorization: "Bearer " + token, // Set the Authorization header
-        },
-      })
+      .post(
+        "/api/order",
+        { ids: Orders },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
       .then((response) => {
-        console.log(response)
         setOrders(response.data);
+        setIsLoading(false); // Set loading to false once data is fetched
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -113,7 +151,6 @@ const MyOrders = () => {
   };
 
   useEffect(() => {
-    // Filter orders based on selectedStatus
     if (selectedStatus === "all") {
       setFilteredOrders(orders);
     } else {
@@ -124,7 +161,6 @@ const MyOrders = () => {
     }
   }, [selectedStatus, orders]);
 
-  // Define your order statuses
   const orderStatusOptions = [
     "confirm",
     "packing",
@@ -135,26 +171,38 @@ const MyOrders = () => {
     "canceled",
   ];
 
+  // Helper function to count orders for each status
+  const countOrdersByStatus = (status) => {
+    return orders.filter((order) => order.status === status).length;
+  };
+
   return (
     <Center>
       <MainContainer>
         <Title>My Orders</Title>
 
         <div className="my-3">
-          {/* Filter dropdown */}
           <StatusFilterDropdown
             onChange={(e) => setSelectedStatus(e.target.value)}
             value={selectedStatus}
           >
-            <option key={"all"} value="all"> All </option>
+            <option key="all" value="all" className="">
+              All ({orders.length})
+            </option>
             {orderStatusOptions.map((status) => (
               <option key={status} value={status}>
-                {status === "all" ? "All" : status}
+                {status}{" "}
+                <span className="count">({countOrdersByStatus(status)})</span>
               </option>
             ))}
           </StatusFilterDropdown>
         </div>
-        {filteredOrders.length > 0 ? (
+        {isLoading ? (
+          // Display skeleton loading while fetching data
+          Array.from({ length: 2 }).map((_, index) => (
+            <SkeletonLoader key={index} />
+          ))
+        ) : filteredOrders.length > 0 ? (
           filteredOrders.map((order, index) => (
             <ProductTable
               key={index}
@@ -166,7 +214,10 @@ const MyOrders = () => {
             >
               {order.line_items.map((item, key) => (
                 <TableRow key={key}>
-                  <img src={item.price_data.product_data.images[0]} alt="Product" />
+                  <img
+                    src={item.price_data.product_data.images[0]}
+                    alt="Product"
+                  />
                   <div>
                     <h4>{item.price_data.product_data.name}</h4>
                     <p>

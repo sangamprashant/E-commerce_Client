@@ -2,7 +2,7 @@ import "./App.css";
 import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AllProducts, Cart, Categories, Footer, Home, MyOrders, NavBar, Order, ProductOpen, Signup } from "./components";
+import { AllProducts, Cart, Categories, Footer, Home, MyOrders, NavBar, Order, ProductOpen, SignIn, Signup } from "./components";
 import { useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
 import axios from "axios";
@@ -10,7 +10,6 @@ import styled from "styled-components";
 
 const ContentBelowMenu = styled.div`
   margin-top: 170px; 
-  
 `;
 
 function App() {
@@ -19,7 +18,6 @@ function App() {
   const [CartProducts, setCartProducts] = useState([])
   const [AllCategories,setAllcategories] = useState([])
   const [Orders,setOrders] = useState([])
-  const [toggleLog, setToggleLog] = useState(true)
   const [token,setToken] = useState(sessionStorage.getItem("token"))
   const [logged,setLogged] = useState(token?true:false)
 
@@ -82,16 +80,17 @@ function App() {
   return (
     <BrowserRouter>
     <CartContext.Provider value={{CartProducts, setCartProducts,setLogged,logged,token,setToken,Orders,setOrders}}>
-      <NavBar toggleLog={toggleLog}/>
+      <NavBar/>
         <Routes>
           <Route path="/" element={<Home FeaturedProduct={FeaturedProducts} products={products} logged={logged}/>} />
           <Route path="/cart" element={<Cart/>} />
           <Route path="/products" element={<AllProducts/>} />
-          <Route path="/log" element={<Signup setToggleLog={setToggleLog}/>} />
           <Route path="/products/:id" element={<ProductOpen/>} />
           <Route path="/myorder" element={<MyOrders/>} />
           <Route path="/order/:data" element={<Order/>} />
           <Route path="/categories" element={<Categories AllCategories={AllCategories}/>} />
+          <Route path="/signup" element={<Signup  />} />
+          <Route path="/signin" element={<SignIn  />} />
 
         </Routes>
       <Footer/>
